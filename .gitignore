@@ -36,3 +36,6 @@ nosetests.xml
 .pydevproject
 
 target
+
+# common virtualenv names
+venv
