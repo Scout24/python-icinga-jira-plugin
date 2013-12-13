@@ -8,8 +8,6 @@ This plugin currently only handles the following notification types:
 * ``PROBLEM`` for service and host problems
 * ``RECOVERY`` for service and host problems
 
-For more information, see section "Notifications and Jira" below.
-
 This plugin is written in Python. It works on Python 2.6 and 2.7.
 
 For installation instructions and development issues please go into our wiki:
