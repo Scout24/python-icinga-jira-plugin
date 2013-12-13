@@ -7,6 +7,8 @@ Options:
   -c, --config CONFIG               config file for plugin
 
 """
+from __future__ import print_function
+
 import os
 import sys
 import ConfigParser
@@ -19,7 +21,8 @@ from jira.exceptions import JIRAError
 from jinja2 import Template
 
 
-MANDATORY_CONFIG_ENTRIES = ['url', 'username', 'password', 'jira_project_key', 'jira_issue_type']
+MANDATORY_CONFIG_ENTRIES = [
+    'url', 'username', 'password', 'jira_project_key', 'jira_issue_type']
 
 
 class CantCloseTicketException(Exception):
@@ -63,13 +66,15 @@ class IcingaEnvironment(object):
     def _extract_missing_values(self, keys):
         missing = []
         for env_key in keys:
-            if getattr(self, env_key) in  [None, '']:
+            if getattr(self, env_key) in [None, '']:
                 missing.append(self.MAPPING[env_key])
         return missing
 
     def _validate_recovery_data(self):
-        missing_service_recovery_data = self._extract_missing_values(['last_service_problem_id'])
-        missing_host_recovery_data = self._extract_missing_values(['last_host_problem_id'])
+        missing_service_recovery_data = self._extract_missing_values(
+            ['last_service_problem_id'])
+        missing_host_recovery_data = self._extract_missing_values(
+            ['last_host_problem_id'])
 
         if self.is_service_issue():
             if len(missing_service_recovery_data) != 0:
@@ -91,7 +96,8 @@ class IcingaEnvironment(object):
 
     def _validate(self):
         if not self.notification_type:
-            raise ValueError('Environment is missing %s' % self.MAPPING['notification_type'])
+            raise ValueError('Environment is missing %s' %
+                             self.MAPPING['notification_type'])
 
         if (self.has_new_problem()):
             self._validate_problem_data()
@@ -114,7 +120,8 @@ class IcingaEnvironment(object):
 
     def get_recovery_last_problem_id(self):
         if not self.is_recovered():
-            raise TypeError("Ticket does not act in recovery mode, but %s" % self.notification_type)
+            raise TypeError(
+                "Ticket does not act in recovery mode, but %s" % self.notification_type)
         if self.is_service_issue():
             return self.last_service_problem_id
         return self.last_host_problem_id
@@ -189,6 +196,7 @@ class Issue(object):
 
 
 class OpenIssue(Issue):
+
     def __init__(self, jira, config, icinga_environment):
         self.jira = jira
 
@@ -220,6 +228,7 @@ class OpenIssue(Issue):
 
 
 class CloseIssue(Issue):
+
     def __init__(self, jira, icinga_environment):
         self.jira = jira
         self.icinga_environment = icinga_environment
@@ -233,8 +242,8 @@ class CloseIssue(Issue):
                 self._set_comment(issue)
                 handled_issues.append(issue)
             except CantCloseTicketException as e:
-                print ("WARNING: %s could not be closed, reason: %s" %
-                       (issue.key, str(e)))
+                print("WARNING: %s could not be closed, reason: %s" %
+                      (issue.key, str(e)))
         return handled_issues
 
     def _find_jira_issues_by_label(self):
@@ -255,7 +264,8 @@ class CloseIssue(Issue):
         for transition in self.jira.transitions(issue):
             if transition['name'] == 'Close':
                 return int(transition['id'])
-        raise CantCloseTicketException("Ticket does not have 'Close' transition; maybe it's already closed")
+        raise CantCloseTicketException(
+            "Ticket does not have 'Close' transition; maybe it's already closed")
 
 
 def open_jira_session(server, username, password, verify=False):
@@ -274,7 +284,7 @@ def parse_and_validate_config_file(file_pointer):
 
 
 def print_usage_and_exit(arguments):
-    print arguments
+    print(arguments)
     sys.exit(1)
 
 
@@ -297,13 +307,13 @@ if __name__ == '__main__':
         config = read_configuration_file(args)
         icinga_environment = IcingaEnvironment(os.environ)
     except IOError as e:
-        print ("Could not find configuration file: %s" % e)
+        print("Could not find configuration file: %s" % e)
         print_usage_and_exit(args)
     except ValueError as e:
-        print e
+        print(e)
         print_usage_and_exit(args)
     except ConfigParser.NoSectionError as e:
-        print ("Configuration file is corrupt: %s" % e)
+        print("Configuration file is corrupt: %s" % e)
         print_usage_and_exit(args)
 
     jira = open_jira_session(config['url'],
@@ -313,9 +323,9 @@ if __name__ == '__main__':
     try:
         issues = issue_factory(jira, icinga_environment, config).execute()
         issue_url_list_as_string = ",".join(create_ticket_list(config, issues))
-        print ("Event %s has been successfully handled: %s" %
-               (icinga_environment.notification_type, issue_url_list_as_string))
+        print("Event %s has been successfully handled: %s" %
+              (icinga_environment.notification_type, issue_url_list_as_string))
     except Exception as e:
-        print ("An error occurred while handling event %s: %s" %
-               (icinga_environment.notification_type, e))
+        print("An error occurred while handling event %s: %s" %
+              (icinga_environment.notification_type, e))
         sys.exit(1)

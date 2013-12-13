@@ -25,6 +25,11 @@ class TestCloseIssue(unittest.TestCase):
         self.icinga_environment = Mock()
         self.icinga_environment.get_jira_recovery_label.return_value = 'ICI#123'
         self.close_issue = CloseIssue(self.jira_mock, self.icinga_environment)
+        self.print_patcher = patch('__builtin__.print')
+        self.print_patcher.start()
+
+    def tearDown(self):
+        self.print_patcher.stop()
 
     def test_find_jira_issue_by_label(self):
         self.jira_mock.search_issues.return_value = 'found issue'
