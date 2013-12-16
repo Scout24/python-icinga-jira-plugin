@@ -17,5 +17,5 @@ https://github.com/ImmobilienScout24/python-icinga-jira-plugin/wiki
 ## Contributors
 
 * Oliver Hoogvliet <oliver@hoogvliet.de>
-* Maximilien Riehl <maximilien.riehl@gmail.com>
+* Maximilien Riehl <max@riehl.io>
 * Valentin Haenel <valentin@haenel.co>
