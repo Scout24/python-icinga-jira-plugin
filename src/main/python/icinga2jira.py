@@ -52,7 +52,7 @@ class IcingaEnvironment(object):
                'short_date_time': 'ICINGA_SHORTDATETIME',
                }
 
-    ICINGA_PREFIX = "ICI#"
+    ICINGA_PREFIX = "ICI"
 
     def __init__(self, environment):
         for attribute_name, argument_name in self.MAPPING.iteritems():
@@ -127,7 +127,7 @@ class IcingaEnvironment(object):
         return self.last_host_problem_id
 
     def _create_icinga_label(self, icinga_id):
-        return self.ICINGA_PREFIX + icinga_id
+        return "%s#%s#%s" % (self.ICINGA_PREFIX, icinga_id, self.host_name)
 
     def get_jira_recovery_label(self):
         return self._create_icinga_label(self.get_recovery_last_problem_id())

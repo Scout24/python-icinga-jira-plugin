@@ -20,6 +20,7 @@ NOTIFICATION_TYPE_RECOVERY = "RECOVERY"
 ANY_SERVICE_MESSAGE = "any service message"
 ANY_SHORT_DATE_TIME = "11-26-2013 15:42:05"
 ANY_LAST_HOST_PROBLEM_ID = "9999999999999"
+ANY_ICINGA_LABEL_STRING_FORMAT = "ICI#%s#%s"
 
 
 def create_valid_environment_dict_for_host_problem():
@@ -191,7 +192,7 @@ class IcingaEnvironmentTest(unittest.TestCase):
 
         environment = IcingaEnvironment(test_dict)
 
-        self.assertEqual("ICI#%s" % ANY_LAST_SERVICE_PROBLEM_ID,
+        self.assertEqual(ANY_ICINGA_LABEL_STRING_FORMAT % (ANY_LAST_SERVICE_PROBLEM_ID, ANY_HOSTNAME),
                          environment.get_jira_recovery_label())
 
     def test_get_jira_recovery_label_returns_correct_value_for_host_recovery(self):
@@ -199,7 +200,7 @@ class IcingaEnvironmentTest(unittest.TestCase):
 
         environment = IcingaEnvironment(test_dict)
 
-        self.assertEqual("ICI#%s" % ANY_LAST_HOST_PROBLEM_ID,
+        self.assertEqual(ANY_ICINGA_LABEL_STRING_FORMAT % (ANY_LAST_HOST_PROBLEM_ID, ANY_HOSTNAME),
                          environment.get_jira_recovery_label())
 
     def test_create_labels_list_contains_service_problem_id(self):
@@ -208,8 +209,7 @@ class IcingaEnvironmentTest(unittest.TestCase):
         actual_labels = environment.create_labels_list()
 
         self.assertEqual(len(actual_labels), 1)
-        self.assertEqual(actual_labels[0], "ICI#%s" %
-                         ANY_SERVICE_PROBLEM_ID)
+        self.assertEqual(actual_labels[0], ANY_ICINGA_LABEL_STRING_FORMAT % (ANY_SERVICE_PROBLEM_ID, ANY_HOSTNAME))
 
     def test_create_labels_list_contains_host_problem_id(self):
         test_dict = create_valid_environment_dict_for_host_problem()
@@ -217,4 +217,12 @@ class IcingaEnvironmentTest(unittest.TestCase):
         actual_labels = environment.create_labels_list()
 
         self.assertEqual(1, len(actual_labels))
-        self.assertEqual("ICI#%s" % ANY_HOST_PROBLEM_ID, actual_labels[0])
+        self.assertEqual(ANY_ICINGA_LABEL_STRING_FORMAT % (ANY_HOST_PROBLEM_ID, ANY_HOSTNAME), actual_labels[0])
+
+    def test_create_icinga_label_with_prefix_and_hostname(self):
+        test_dict = create_valid_environment_dict_for_host_problem()
+        environment = IcingaEnvironment(test_dict)
+        actual_label = environment._create_icinga_label(ANY_HOST_PROBLEM_ID)
+
+        self.assertEqual(ANY_ICINGA_LABEL_STRING_FORMAT % (ANY_HOST_PROBLEM_ID, ANY_HOSTNAME), actual_label)
+
