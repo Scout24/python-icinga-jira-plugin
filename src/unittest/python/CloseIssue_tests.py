@@ -8,7 +8,7 @@ from icinga2jira import CloseIssue, CantCloseTicketException
 ANY_ISSUE = {'id': 'any id'}
 ANY_TRANSITIONS = [{'name': 'Close', 'id': 45},
                    {'name': 'Start Work', 'id': 11},
-                   ]
+]
 
 
 def create_issue_mock(key):
@@ -18,7 +18,6 @@ def create_issue_mock(key):
 
 
 class TestCloseIssue(unittest.TestCase):
-
     def setUp(self):
         self.jira_mock = Mock()
         self.ticket = Mock()
@@ -107,7 +106,7 @@ class TestCloseIssue(unittest.TestCase):
                             _find_jira_issues_by_label=find_mock,
                             _close=close_mock,
                             _set_comment=comment_mock
-                            ) as values:
+        ) as values:
             close_issue = CloseIssue(self.jira_mock, self.icinga_environment)
             result = close_issue.execute()
 
@@ -125,7 +124,7 @@ class TestCloseIssue(unittest.TestCase):
                             _find_jira_issues_by_label=find_mock,
                             _close=close_mock,
                             _set_comment=comment_mock
-                            ) as values:
+        ) as values:
             close_issue = CloseIssue(self.jira_mock, self.icinga_environment)
             result = close_issue.execute()
 
