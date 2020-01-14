@@ -1,5 +1,7 @@
 # Plugin for Icinga to automatically report alerts to Jira
 
+# This project is DEPRECATED and not any longer supported
+
 Icinga offers the possibility to relay notifications via command scripts. This plugin is intended to forward these
 notifications automatically into a Jira ticket system.
 
